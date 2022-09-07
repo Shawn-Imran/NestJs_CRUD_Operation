@@ -7,13 +7,33 @@ export const ProductSchema = new mongoose.Schema(
       type: Boolean,
       required: false,
     },
-    name: {
+    title: {
       type: String,
       required: true,
       trim: true,
     },
-    price: {
+    body_html: {
       type: String,
+      required: false,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
+    vendor: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    product_type: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    tags: {
+      type: Array,
       required: true,
       trim: true,
     },

@@ -8,6 +8,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import Shopify from '@shopify/shopify-api';
+import { request, response } from 'express';
 import { Model } from 'mongoose';
 import { CreateProductDto } from 'src/dto/product.dto';
 import { Product } from 'src/interfaces/product.interface';
@@ -27,7 +29,17 @@ export class ProductService {
   }
 
   async findOne(id: string): Promise<Product> {
+    console.log(id);
+
     const product = await this.productModel.findById(id).exec();
+    console.log(product);
+
+    const test_session = await Shopify.Utils.loadCurrentSession(
+      request,
+      response,
+    );
+    const shop = test_session.shop;
+
     if (!product) {
       throw new NotFoundException(`Product #${id} not found`);
     }
