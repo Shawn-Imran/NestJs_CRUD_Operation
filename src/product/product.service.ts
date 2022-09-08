@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import {
   //   BadRequestException,
   CACHE_MANAGER,
@@ -13,11 +14,15 @@ import { request, response } from 'express';
 import { Model } from 'mongoose';
 import { CreateProductDto } from 'src/dto/product.dto';
 import { Product } from 'src/interfaces/product.interface';
+// import express, { Request, Response } from 'express';
 
 @Injectable()
 export class ProductService {
   private readonly logger = new Logger(ProductService.name);
-  constructor(@InjectModel('Product') private productModel: Model<Product>) {}
+  constructor(
+    @InjectModel('Product') private productModel: Model<Product>,
+    private readonly httpService: HttpService,
+  ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const newProduct = new this.productModel(createProductDto);
@@ -31,16 +36,49 @@ export class ProductService {
   async findOne(id: string): Promise<Product> {
     console.log(id);
 
-    const product = await this.productModel.findById(id).exec();
-    console.log(product);
-    let shopifyProduct
+    const tempproduct = await this.productModel.findById(id).exec();
+    console.log(tempproduct);
 
-    
+    const shopifyProduct = {
+      product: {},
+    };
 
-    if (!product) {
+    if (tempproduct) {
+      shopifyProduct.product = tempproduct;
+      console.log(shopifyProduct);
+      const url =
+        'https://08869b5b39dfe5ab6fa2f08f2fbd9c10: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@web-app-2941.myshopify.com//admin/api/2022-07/products.json';
+
+      // const options = {
+      //   method: 'POST',
+      //   uri: url,
+      //   json: true,
+      //   resolveWithFullResponse: true, //added this to view status code
+      //   body: shopifyProduct, //pass new product object - NEW - request-promise problably updated
+      // };
+
+      // const result = new Request(options);
+
+      this.httpService.post(url, shopifyProduct).subscribe((res) => {
+        console.log(res.data);
+        console.log(res.status);
+        console.log(res.statusText);
+        console.log(res.headers);
+        console.log(res.config);
+      });
+
+      // const result = new Request(options, (err: any, _res: any, body: any) => {
+      //   if (err) {
+      //     console.log(err);
+      //   }
+      //   console.log(body);
+      // });
+    }
+
+    if (!tempproduct) {
       throw new NotFoundException(`Product #${id} not found`);
     }
-    return product;
+    return tempproduct;
   }
 
   //   async update(
