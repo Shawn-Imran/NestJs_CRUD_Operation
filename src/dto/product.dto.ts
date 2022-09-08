@@ -6,7 +6,8 @@ export class CreateProductDto{
     vendor: string;
     product_type: string;
     tags: Array<string>;
+    variants?: any;
+    options?: any;
     description: string;
-    price: number;
-    readonly: boolean;
+
 }
