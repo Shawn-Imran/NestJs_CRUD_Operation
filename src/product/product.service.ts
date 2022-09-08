@@ -33,12 +33,9 @@ export class ProductService {
 
     const product = await this.productModel.findById(id).exec();
     console.log(product);
+    let shopifyProduct
 
-    const test_session = await Shopify.Utils.loadCurrentSession(
-      request,
-      response,
-    );
-    const shop = test_session.shop;
+    
 
     if (!product) {
       throw new NotFoundException(`Product #${id} not found`);
